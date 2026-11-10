@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: eks-webapps
+  namespace: argocd
+
+spec:
+  generators:
+    - list:
+        elements:
+          - name: app1
+            host: app1.com
+
+          - name: app2
+            host: app2.com
+
+          - name: app3
+            host: app3.com
+
+  template:
+    metadata:
+      name: '{{name}}'
+
+    spec:
+      project: default
+
+      source:
+        repoURL: https://github.com/nsiva6/eks-argocd-helm-gitops.git
+        targetRevision: main
+        path: charts/webapp
+
+        helm:
+          releaseName: '{{name}}'
+          valuesObject:
+            fullnameOverride: '{{name}}'
+            replicaCount: 3
+
+            image:
+              repository: nginx
+              tag: "1.27-alpine"
+
+            service:
+              type: ClusterIP
+              port: 80
+
+            ingress:
+              enabled: true
+              host: '{{host}}'
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: apps
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+
+        syncOptions:
+          - CreateNamespace=true
