@@ -25,7 +25,7 @@ spec:
       project: default
 
       source:
-        repoURL: https://github.com/YOUR_USERNAME/eks-argocd-helm-gitops.git
+        repoURL: https://github.com/nsiva6/eks-argocd-helm-gitops.git
         targetRevision: main
         path: charts/webapp
 
