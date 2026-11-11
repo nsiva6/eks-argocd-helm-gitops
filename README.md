@@ -1,1 +1,0 @@
-# eks-argocd-helm-gitops
